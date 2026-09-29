@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Use a plugin-owned notification group for the Extended Tool Windows UI
+  reminder, so the reminder does not depend on JetBrains' IDE/plugin updates
+  notification group.
+
 ## 0.1.0
 
 - Initial public release of Rider Classic-ish Dark UI.

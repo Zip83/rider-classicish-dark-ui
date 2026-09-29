@@ -17,6 +17,7 @@
   </dependencies>
   <depends optional="true">com.intellij.extendedToolWindowsUi</depends>
   <extensions defaultExtensionNs="com.intellij">
+    <notificationGroup id="Rider Classic-ish Dark UI" displayType="BALLOON" />
     <iconMapperSuppressor />
     <postStartupActivity implementation="local.codex.rider.ClassicishDarkStartupActivity" order="last" />
   </extensions>
