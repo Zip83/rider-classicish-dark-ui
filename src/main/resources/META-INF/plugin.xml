@@ -6,9 +6,18 @@
   <vendor>Zip83</vendor>
   <category>UI</category>
   <description><![CDATA[
-    Minimal buildable scaffold for the Rider Classic-ish Dark UI plugin.
+    Applies a compact Rider Dark UI profile for Rider 2026.3 EAP without
+    installing the full Classic UI plugin. It suppresses New UI / Islands icon
+    remapping and applies selected classic-ish appearance settings once, while
+    leaving later manual settings changes alone. JetBrains' Extended Tool
+    Windows UI plugin is recommended for the closest classic-style layout.
   ]]></description>
   <dependencies>
     <module name="intellij.platform.monolith" />
   </dependencies>
+  <depends optional="true">com.intellij.extendedToolWindowsUi</depends>
+  <extensions defaultExtensionNs="com.intellij">
+    <iconMapperSuppressor />
+    <postStartupActivity implementation="local.codex.rider.ClassicishDarkStartupActivity" order="last" />
+  </extensions>
 </idea-plugin>
