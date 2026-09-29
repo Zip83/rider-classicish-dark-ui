@@ -13,8 +13,8 @@ classic-style UI without installing the full Classic UI plugin.
   `if`, `else`, loop, and `catch` bodies.
 - Keep runtime tweaks best-effort. A missing internal Rider setting should skip
   that tweak, not break IDE startup.
-- Runtime profile tweaks should be applied once and must respect later manual
-  IDE settings changes.
+- Apply the initial runtime profile once. Explicit Settings changes must apply
+  immediately and must preserve later manual IDE settings changes.
 - Do not change keymaps.
 - Do not add a dependency on the Classic UI plugin.
 - Keep JetBrains'
@@ -54,6 +54,10 @@ powershell -ExecutionPolicy Bypass -File .\scripts\build-local.ps1
 5. Select the plugin ZIP and restart Rider.
 6. Confirm the toolbar, icons, tabs, editor colors, project tree density, and
    tool window layout still match the intended classic-ish profile.
+7. Disable and re-enable individual plugin settings and confirm `Apply` restores
+   or reapplies them without overwriting a newer manual Rider change.
+8. With Extended Tool Windows UI disabled, confirm the recommendation dialog is
+   visible once and the companion status reads `Disabled`.
 
 ## Releases
 

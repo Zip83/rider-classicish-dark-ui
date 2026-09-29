@@ -2,11 +2,17 @@
 
 ## Unreleased
 
-- Use a plugin-owned notification group for the Extended Tool Windows UI
-  reminder, so the reminder does not depend on JetBrains' IDE/plugin updates
-  notification group.
 - Stop setting Rider's internal tool-window stripe manager property. Existing
   user settings are left untouched.
+- Add a `Settings | Appearance & Behavior | Rider Classic-ish Dark UI` page for
+  toggling individual profile tweaks and applying changes immediately.
+- Capture pre-plugin values and restore them when a tweak is disabled, while
+  preserving values changed manually afterward.
+- Show a real startup dialog when Extended Tool Windows UI is missing or
+  disabled, with `Open Plugins`, `Not now`, and `Don't ask again` controls.
+- Detect Extended Tool Windows UI without declaring it as a plugin dependency.
+- Show companion-plugin status in Settings and keep internal migration switches
+  in a separate Advanced section.
 
 ## 0.1.0
 
