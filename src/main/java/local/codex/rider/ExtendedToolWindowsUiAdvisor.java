@@ -11,6 +11,7 @@ import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 
 final class ExtendedToolWindowsUiAdvisor {
+  private static final String NOTIFICATION_GROUP_ID = "Rider Classic-ish Dark UI";
   private static final PluginId EXTENDED_TOOL_WINDOWS_UI_ID = PluginId.getId("com.intellij.extendedToolWindowsUi");
   private static final String EXTENDED_TOOL_WINDOWS_UI_URL =
     "https://plugins.jetbrains.com/plugin/34198-extended-tool-windows-ui";
@@ -28,7 +29,7 @@ final class ExtendedToolWindowsUiAdvisor {
     notificationShown = true;
 
     Notification notification = NotificationGroupManager.getInstance()
-      .getNotificationGroup("IDE and Plugin Updates")
+      .getNotificationGroup(NOTIFICATION_GROUP_ID)
       .createNotification(
         "Extended Tool Windows UI is recommended",
         "Rider Classic-ish Dark UI works without it, but JetBrains' Extended Tool Windows UI gives the closest classic-style tool window layout.",
