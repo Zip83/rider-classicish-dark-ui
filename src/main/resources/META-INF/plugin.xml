@@ -15,10 +15,14 @@
   <dependencies>
     <module name="intellij.platform.monolith" />
   </dependencies>
-  <depends optional="true">com.intellij.extendedToolWindowsUi</depends>
   <extensions defaultExtensionNs="com.intellij">
-    <notificationGroup id="Rider Classic-ish Dark UI" displayType="BALLOON" />
+    <applicationService serviceImplementation="local.codex.rider.ClassicishDarkSettings" />
+    <applicationConfigurable
+      parentId="appearance"
+      instance="local.codex.rider.ClassicishDarkSettingsConfigurable"
+      id="io.github.zip83.rider.classicish.dark.ui.settings"
+      displayName="Rider Classic-ish Dark UI" />
     <iconMapperSuppressor />
-    <postStartupActivity implementation="local.codex.rider.ClassicishDarkStartupActivity" order="last" />
+    <postStartupActivity implementation="local.codex.rider.ClassicishDarkProjectActivity" order="last" />
   </extensions>
 </idea-plugin>

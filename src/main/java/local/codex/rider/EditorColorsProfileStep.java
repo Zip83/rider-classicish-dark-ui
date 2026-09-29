@@ -1,10 +1,22 @@
 package local.codex.rider;
 
 import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
 
 final class EditorColorsProfileStep implements StartupProfileStep {
   private static final String CLASSIC_RIDER_DARK_SCHEME = "_@user_Rider Dark";
+  private final StartupProfileOptions previousOptions;
+  private final StartupProfileOptions options;
+  private final ManagedValueApplicator applicator;
+
+  EditorColorsProfileStep(
+    StartupProfileOptions previousOptions,
+    StartupProfileOptions options,
+    ManagedValueApplicator applicator
+  ) {
+    this.previousOptions = previousOptions;
+    this.options = options;
+    this.applicator = applicator;
+  }
 
   @Override
   public String label() {
@@ -12,12 +24,14 @@ final class EditorColorsProfileStep implements StartupProfileStep {
   }
 
   @Override
-  public void apply() {
+  public void apply() throws Exception {
     EditorColorsManager manager = EditorColorsManager.getInstance();
-    EditorColorsScheme scheme = manager.getScheme(CLASSIC_RIDER_DARK_SCHEME);
-
-    if (scheme != null) {
-      manager.setGlobalScheme(scheme);
-    }
+    applicator.apply(
+      "editor.globalScheme",
+      previousOptions.isEditorColorsEnabled(),
+      options.isEditorColorsEnabled(),
+      CLASSIC_RIDER_DARK_SCHEME,
+      new EditorSchemeValueAccess(manager)
+    );
   }
 }

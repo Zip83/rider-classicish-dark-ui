@@ -21,6 +21,8 @@ dependencies {
     }
     jetbrainsRuntime()
   }
+
+  testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
 }
 
 java {
@@ -33,5 +35,9 @@ tasks {
   patchPluginXml {
     sinceBuild.set(providers.gradleProperty("pluginSinceBuild"))
     untilBuild.set(providers.gradleProperty("pluginUntilBuild"))
+  }
+
+  test {
+    useJUnitPlatform()
   }
 }

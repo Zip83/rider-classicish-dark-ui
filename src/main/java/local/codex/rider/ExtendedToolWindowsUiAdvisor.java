@@ -1,52 +1,100 @@
 package local.codex.rider;
 
-import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.plugins.PluginManagerCore;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationAction;
-import com.intellij.notification.NotificationGroupManager;
-import com.intellij.notification.NotificationType;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 final class ExtendedToolWindowsUiAdvisor {
-  private static final String NOTIFICATION_GROUP_ID = "Rider Classic-ish Dark UI";
-  private static final PluginId EXTENDED_TOOL_WINDOWS_UI_ID = PluginId.getId("com.intellij.extendedToolWindowsUi");
-  private static final String EXTENDED_TOOL_WINDOWS_UI_URL =
-    "https://plugins.jetbrains.com/plugin/34198-extended-tool-windows-ui";
-  private static boolean notificationShown;
+  enum Availability {
+    ENABLED("Enabled"),
+    DISABLED("Disabled"),
+    NOT_INSTALLED("Not installed");
 
-  void notifyIfNeeded(Project project) {
-    if (notificationShown) {
-      return;
+    private final String displayName;
+
+    Availability(String displayName) {
+      this.displayName = displayName;
     }
 
-    if (isInstalledAndEnabled()) {
-      return;
+    String displayName() {
+      return displayName;
     }
-
-    notificationShown = true;
-
-    Notification notification = NotificationGroupManager.getInstance()
-      .getNotificationGroup(NOTIFICATION_GROUP_ID)
-      .createNotification(
-        "Extended Tool Windows UI is recommended",
-        "Rider Classic-ish Dark UI works without it, but JetBrains' Extended Tool Windows UI gives the closest classic-style tool window layout.",
-        NotificationType.INFORMATION
-      );
-
-    notification.addAction(NotificationAction.createSimple("Open plugin page", () -> {
-      BrowserUtil.browse(EXTENDED_TOOL_WINDOWS_UI_URL);
-    }));
-    notification.addAction(NotificationAction.createSimple("Open Plugins settings", () -> {
-      ShowSettingsUtil.getInstance().showSettingsDialog(project, "Plugins");
-    }));
-    notification.notify(project);
   }
 
-  private boolean isInstalledAndEnabled() {
-    return PluginManagerCore.getPlugin(EXTENDED_TOOL_WINDOWS_UI_ID) != null
-      && !PluginManagerCore.isDisabled(EXTENDED_TOOL_WINDOWS_UI_ID);
+  private static final Logger LOG = Logger.getInstance(ExtendedToolWindowsUiAdvisor.class);
+  private static final PluginId PLUGIN_ID = PluginId.getId("com.intellij.extendedToolWindowsUi");
+  private static final ShowOnceGate DIALOG_GATE = new ShowOnceGate();
+
+  Availability availability() {
+    boolean installed = PluginManagerCore.getPlugin(PLUGIN_ID) != null;
+    return classify(installed, PluginManagerCore.isDisabled(PLUGIN_ID), isDisabledInConfigFile());
+  }
+
+  String statusText() {
+    return "Extended Tool Windows UI: " + availability().displayName();
+  }
+
+  void showIfNeeded(Project project) {
+    Availability availability = availability();
+    LOG.info("Extended Tool Windows UI state: " + availability);
+
+    if (availability == Availability.ENABLED) {
+      return;
+    }
+
+    ApplicationManager.getApplication().invokeLater(() -> showDialog(project, availability));
+  }
+
+  private void showDialog(Project project, Availability availability) {
+    if (project.isDisposed() || !DIALOG_GATE.tryEnter()) {
+      return;
+    }
+
+    ExtendedToolWindowsUiDialog dialog = new ExtendedToolWindowsUiDialog(project, availability);
+    dialog.show();
+
+    if (dialog.isDoNotAskAgainSelected()) {
+      ClassicishDarkSettings.getInstance().setExtendedToolWindowsUiReminderEnabled(false);
+    }
+
+    if (dialog.isOK()) {
+      ShowSettingsUtil.getInstance().showSettingsDialog(project, "Plugins");
+    }
+  }
+
+  private boolean isDisabledInConfigFile() {
+    Path disabledPluginsPath = PathManager.getConfigDir().resolve("disabled_plugins.txt");
+    if (!Files.isRegularFile(disabledPluginsPath)) {
+      return false;
+    }
+
+    try {
+      return Files.readAllLines(disabledPluginsPath).stream()
+        .map(String::trim)
+        .anyMatch(PLUGIN_ID.getIdString()::equals);
+    }
+    catch (Exception e) {
+      LOG.warn("Cannot read disabled plugins file: " + disabledPluginsPath, e);
+      return false;
+    }
+  }
+
+  static Availability classify(boolean installed, boolean disabledByApi, boolean disabledByConfig) {
+    if (!installed) {
+      return Availability.NOT_INSTALLED;
+    }
+
+    if (disabledByApi || disabledByConfig) {
+      return Availability.DISABLED;
+    }
+
+    return Availability.ENABLED;
   }
 }

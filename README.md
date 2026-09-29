@@ -15,13 +15,13 @@ theme, toolbar, font, and compactness tweaks without requiring it.
 ## What It Does
 
 - Suppresses New UI / Islands icon remapping through `iconMapperSuppressor`.
-- Applies selected compact Rider Dark UI settings once.
+- Applies the initial compact Rider Dark UI profile once.
 - Keeps the main toolbar enabled and separated from the main menu.
 - Keeps selected tab styling closer to underline-only behavior.
 - Tries to keep project tree indentation and icon size tighter.
 - Selects `_@user_Rider Dark` editor colors if that scheme exists.
 - Recommends JetBrains' Extended Tool Windows UI for the classic-style tool
-  window layout and shows a startup reminder if it is missing or disabled.
+  window layout and shows a startup dialog if it is missing or disabled.
 - Avoids keymap changes.
 - Respects later manual IDE settings changes by not reapplying the profile after
   the first successful startup application.
@@ -32,6 +32,17 @@ skips the individual tweak instead of breaking IDE startup.
 Most tweaks use normal IntelliJ Platform APIs. A small isolated reflection
 fallback remains for Rider EAP UI settings that are not exposed as stable public
 plugin APIs.
+
+Plugin settings are available under
+`Settings | Appearance & Behavior | Rider Classic-ish Dark UI`. Applying or
+saving the page immediately applies changed appearance options. Turning an
+option off restores the value captured before the plugin changed it, unless the
+value was changed manually in Rider afterward. Internal migration switches are
+kept in a separate Advanced section.
+
+Extended Tool Windows UI is detected independently and is not a plugin
+dependency. Rider Classic-ish Dark UI does not enable it or reproduce its tool
+window layout.
 
 ## Install
 

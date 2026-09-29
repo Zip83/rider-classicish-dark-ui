@@ -13,6 +13,10 @@ final class StartupProfileApplicationGate {
     properties().setValue(PROFILE_APPLIED_KEY, true, false);
   }
 
+  void resetApplied() {
+    properties().unsetValue(PROFILE_APPLIED_KEY);
+  }
+
   private PropertiesComponent properties() {
     return PropertiesComponent.getInstance();
   }

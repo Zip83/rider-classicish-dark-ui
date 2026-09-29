@@ -28,8 +28,8 @@ This file defines the binding working rules for this repository.
 - Keep value conversion separate from reflection method lookup and field lookup.
 - Runtime tweaks must be best-effort unless the plugin cannot safely continue.
   One failed tweak must not break IDE startup.
-- Runtime profile tweaks must be applied once and must respect later manual IDE
-  settings changes.
+- Apply the initial runtime profile once. Explicit Settings changes apply
+  immediately and must respect later manual IDE settings changes.
 - Do not change keymaps from plugin code.
 - Do not depend on the Classic UI plugin.
 - Keep JetBrains' Extended Tool Windows UI optional but recommended unless the
