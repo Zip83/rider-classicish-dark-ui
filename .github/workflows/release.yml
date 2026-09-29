@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: "9.8.0"
+
+      - name: Resolve plugin version
+        run: echo "PLUGIN_VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+
+      - name: Build plugin
+        run: gradle -PpluginVersion="$PLUGIN_VERSION" buildPlugin
+
+      - name: Verify plugin package
+        run: gradle -PpluginVersion="$PLUGIN_VERSION" verifyPluginStructure verifyPluginProjectConfiguration
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: build/distributions/*.zip
+          generate_release_notes: true
