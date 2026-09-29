@@ -1,0 +1,40 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: "9.8.0"
+
+      - name: Build plugin
+        run: gradle buildPlugin
+
+      - name: Verify plugin package
+        run: gradle verifyPluginStructure verifyPluginProjectConfiguration
+
+      - name: Upload plugin artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: rider-classicish-dark-ui
+          path: build/distributions/*.zip
+          if-no-files-found: error

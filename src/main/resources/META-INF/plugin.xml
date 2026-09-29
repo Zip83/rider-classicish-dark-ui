@@ -1,0 +1,14 @@
+<idea-plugin>
+  <name>Rider Classic-ish Dark UI</name>
+  <id>io.github.zip83.rider.classicish.dark.ui</id>
+  <version>0.1.0</version>
+  <idea-version since-build="263.0" until-build="263.*" />
+  <vendor>Zip83</vendor>
+  <category>UI</category>
+  <description><![CDATA[
+    Minimal buildable scaffold for the Rider Classic-ish Dark UI plugin.
+  ]]></description>
+  <dependencies>
+    <module name="intellij.platform.monolith" />
+  </dependencies>
+</idea-plugin>
